@@ -48,8 +48,7 @@
 <body>
 
 <div class="auth-container">
-    <h2>Verify your Phone Number</h2>
-    <h3>Enter your phone number with country code </h3>
+    <h2>Phone Number Verification</h2>
     <input type="tel" id="phone" placeholder="Enter phone number (+1234567890)" required>
     <div id="recaptcha-container"></div>
     <button onclick="sendOTP()">Send OTP</button>
@@ -80,8 +79,9 @@
     function sendOTP() {
         const phoneNumber = document.getElementById('phone').value;
         const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            size: 'invisible',
+            size: 'normal', // Change to 'normal' to make reCAPTCHA visible
         });
+        appVerifier.render(); // Ensure reCAPTCHA is rendered
 
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
             .then((confirmationResult) => {
