@@ -8,7 +8,6 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
 
     <style>
         body {
@@ -50,7 +49,6 @@
 
 <div class="auth-container">
     <h2>Phone Number Verification</h2>
-    <h3>Pleae enter phone number with country code e.g +237(Phone Number) for Cameroon</h3>
     <input type="tel" id="phone" placeholder="Enter phone number (+1234567890)" required>
     <div id="recaptcha-container"></div>
     <button onclick="sendOTP()">Send OTP</button>
@@ -65,32 +63,26 @@
 <script>
     // Your Firebase configuration
     const firebaseConfig = {
-        apiKey: "AIzaSyAnbPcqEU_dJjYXREg61kqaIJgUld-tUjE",
-        authDomain: "otp-ver-pr.firebaseapp.com",
-        projectId: "otp-ver-pr",
-        storageBucket: "otp-ver-pr.firebasestorage.app",
-        messagingSenderId: "440252952853",
-        appId: "1:440252952853:web:8fb5c9fa3ea6788bb7791c",
-        measurementId: "G-B7YSVKNGL5"
+         apiKey: "AIzaSyAnbPcqEU_dJjYXREg61kqaIJgUld-tUjE",
+  authDomain: "otp-ver-pr.firebaseapp.com",
+  projectId: "otp-ver-pr",
+  storageBucket: "otp-ver-pr.firebasestorage.app",
+  messagingSenderId: "440252952853",
+  appId: "1:440252952853:web:8fb5c9fa3ea6788bb7791c",
+  measurementId: "G-B7YSVKNGL5"
     };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    firebase.analytics();
-
-    // Define appVerifier globally to reuse it
-    let appVerifier;
+const app = firebase.initializeApp(firebaseConfig);
+const analytics = firebase.analytics();
 
     // Function to send OTP
     function sendOTP() {
         const phoneNumber = document.getElementById('phone').value;
-        
-        // Initialize reCAPTCHA only once
-        if (!appVerifier) {
-            appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                size: 'normal' // Set to 'normal' to show the reCAPTCHA visibly
-            });
-        }
+        const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            size: 'normal', // Set to 'normal' to show the reCAPTCHA visibly
+        });
 
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
             .then((confirmationResult) => {
