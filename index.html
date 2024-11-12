@@ -103,7 +103,7 @@ const analytics = firebase.analytics();
         confirmationResult.confirm(otp)
             .then((result) => {
                 const user = result.user;
-                alert("Phone number verified successfully!");
+                alert("Phone number verified successfully! Please go back to the original page");
                 document.getElementById('error').textContent = ""; // Clear any previous errors
             })
             .catch((error) => {
