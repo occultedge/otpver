@@ -26,6 +26,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
             text-align: center;
+            position: relative;
         }
         input, button {
             width: 100%;
@@ -43,13 +44,32 @@
             color: red;
             font-size: 14px;
         }
+        /* Spinner styling */
+        .spinner {
+            display: none; /* Hidden initially */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 
 <div class="auth-container">
+    <div class="spinner" id="spinner"></div> <!-- Spinner element -->
     <h2>Phone Number Verification</h2>
-    <p></p>Please enter your phone number in international format (e.g., +1234567890)</p>
+    <p>Please enter your phone number in international format (e.g., +1234567890)</p>
     <input type="tel" id="phone" placeholder="Enter phone number (+1234567890)" required>
     <div id="recaptcha-container"></div>
     <button onclick="sendOTP()">Send OTP</button>
@@ -64,25 +84,35 @@
 <script>
     // Your Firebase configuration
     const firebaseConfig = {
-         apiKey: "AIzaSyAnbPcqEU_dJjYXREg61kqaIJgUld-tUjE",
-  authDomain: "otp-ver-pr.firebaseapp.com",
-  projectId: "otp-ver-pr",
-  storageBucket: "otp-ver-pr.firebasestorage.app",
-  messagingSenderId: "440252952853",
-  appId: "1:440252952853:web:8fb5c9fa3ea6788bb7791c",
-  measurementId: "G-B7YSVKNGL5"
+        apiKey: "AIzaSyAnbPcqEU_dJjYXREg61kqaIJgUld-tUjE",
+        authDomain: "otp-ver-pr.firebaseapp.com",
+        projectId: "otp-ver-pr",
+        storageBucket: "otp-ver-pr.firebasestorage.app",
+        messagingSenderId: "440252952853",
+        appId: "1:440252952853:web:8fb5c9fa3ea6788bb7791c",
+        measurementId: "G-B7YSVKNGL5"
     };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-const app = firebase.initializeApp(firebaseConfig);
-const analytics = firebase.analytics();
+    const analytics = firebase.analytics();
+
+    // Show spinner function
+    function showSpinner() {
+        document.getElementById("spinner").style.display = "block";
+    }
+
+    // Hide spinner function
+    function hideSpinner() {
+        document.getElementById("spinner").style.display = "none";
+    }
 
     // Function to send OTP
     function sendOTP() {
+        showSpinner(); // Show spinner when sending OTP
         const phoneNumber = document.getElementById('phone').value;
         const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            size: 'normal', // Set to 'normal' to show the reCAPTCHA visibly
+            size: 'normal',
         });
 
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
@@ -90,25 +120,30 @@ const analytics = firebase.analytics();
                 window.confirmationResult = confirmationResult;
                 document.getElementById("otpSection").style.display = "block";
                 alert("OTP sent. Please check your phone.");
+                hideSpinner(); // Hide spinner after OTP is sent
             })
             .catch((error) => {
                 console.error("Error sending OTP:", error);
                 document.getElementById('error').textContent = "Failed to send OTP. Please try again.";
+                hideSpinner(); // Hide spinner if there's an error
             });
     }
 
     // Function to verify OTP
     function verifyOTP() {
+        showSpinner(); // Show spinner when verifying OTP
         const otp = document.getElementById('otp').value;
         confirmationResult.confirm(otp)
             .then((result) => {
                 const user = result.user;
                 alert("Phone number verified successfully! Please go back to the original page");
                 document.getElementById('error').textContent = ""; // Clear any previous errors
+                hideSpinner(); // Hide spinner after verification
             })
             .catch((error) => {
                 console.error("Error verifying OTP:", error);
                 document.getElementById('error').textContent = "Invalid OTP. Please try again.";
+                hideSpinner(); // Hide spinner if there's an error
             });
     }
 </script>
